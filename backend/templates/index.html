@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Steganography System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-left h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info .username {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .user-info .email {
+            display: block;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 10px 15px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .nav-item:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .content-area {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input[type="file"],
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="file"]:focus,
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .submit-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 16px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .alert.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+
+        .file-input-wrapper:hover {
+            background: #f0f0ff;
+            border-color: #764ba2;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .file-input-wrapper p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .file-list {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 3px;
+            margin-bottom: 8px;
+        }
+
+        .file-item.last {
+            margin-bottom: 0;
+        }
+
+        .file-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-name {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .file-size {
+            color: #999;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+
+        .output-files {
+            margin-top: 30px;
+        }
+
+        .output-file {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .output-file a {
+            color: #155724;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .output-file a:hover {
+            text-decoration: underline;
+        }
+
+        .download-btn {
+            background: #27ae60;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .download-btn:hover {
+            background: #229954;
+        }
+
+        .keys-status {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .keys-status h3 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+
+        .keys-status p {
+            color: #0c5460;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .status-badge.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .concepts-selector {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .concepts-selector h3 {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .concept-btn {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .concept-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+            transform: translateY(-2px);
+        }
+
+        .concept-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .optimization-status {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .optimization-status h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .optimization-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .opt-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            background: #e8f4f8;
+            color: #0c5460;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .opt-badge.enabled {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .opt-badge.disabled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .concept-description {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-top: 10px;
+            border-left: 3px solid white;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .concepts-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .concepts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .optimization-badges {
+                flex-direction: column;
+            }
+
+            .opt-badge {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Admin Panel Styles */
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .admin-tab-btn {
+            padding: 10px 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .admin-tab-btn:hover {
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .admin-tab-btn.active {
+            color: #6366f1;
+            border-bottom-color: #6366f1;
+        }
+
+        .admin-tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .admin-tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .user-item, .audit-item {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            background: white;
+        }
+
+        .user-item:hover {
+            background: #f9f9f9;
+        }
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-small:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-small.danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-small.danger:hover {
+            background: #ee5a52;
+        }
+
+        .stat-box {
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Header -->
+        <header>
+            <div class="header-left">
+                <div>
+                    <h1>🔒 Steganography Dashboard</h1>
+                    <p>Secure data hiding with user-based encryption</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span class="username" id="display-username">User</span>
+                    <span class="email" id="display-email">user@example.com</span>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar Navigation -->
+            <div class="sidebar">
+                <h3>🗂️ Menu</h3>
+                <div class="nav-menu">
+                    <button class="nav-item active" onclick="switchSection('hide-file')">Hide File</button>
+                    <button class="nav-item" onclick="switchSection('extract-file')">Extract File</button>
+                    <button class="nav-item" onclick="switchSection('hide-message')">Hide Message</button>
+                    <button class="nav-item" onclick="switchSection('extract-message')">Extract Message</button>
+                    <button class="nav-item" onclick="switchSection('my-keys')">My RSA Keys</button>
+                    <button class="nav-item" onclick="switchSection('shared-files')">Shared Files</button>
+                    <hr style="margin: 10px 0; border: none; border-top: 1px solid #ddd;">
+                    <button class="nav-item" id="admin-btn" onclick="switchSection('admin-panel')" style="display:none; background-color: #ff6b6b; color: white;">⚙️ Admin Panel</button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Hide File Section -->
+                <div id="hide-file" class="section active">
+                    <h2>🔐 Hide File in Cover Media</h2>
+                    
+                    <!-- Nine Concepts Selector -->
+                    <div class="concepts-selector">
+                        <h3>📊 Select Concept (9 Cross-Media Combinations)</h3>
+                        <div class="concepts-grid">
+                            <button type="button" class="concept-btn active" data-concept="1" onclick="selectConcept(1, 'Image→Image')">
+                                🖼️<br>Image in Image
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="2" onclick="selectConcept(2, 'Image→Video')">
+                                🎬<br>Image in Video
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="3" onclick="selectConcept(3, 'Image→Audio')">
+                                🔊<br>Image in Audio
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="4" onclick="selectConcept(4, 'Video→Video')">
+                                ⚡<br>Video in Video
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="5" onclick="selectConcept(5, 'Video→Image')">
+                                📹<br>Video in Image
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="6" onclick="selectConcept(6, 'Video→Audio')">
+                                🎥<br>Video in Audio
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="7" onclick="selectConcept(7, 'Audio→Audio')">
+                                🎵<br>Audio in Audio
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="8" onclick="selectConcept(8, 'Audio→Image')">
+                                🎶<br>Audio in Image
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="9" onclick="selectConcept(9, 'Audio→Video')">
+                                🎼<br>Audio in Video
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="10" onclick="selectConcept(10, 'Image→Document')">
+                                📄<br>Image in Document
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="11" onclick="selectConcept(11, 'Document→Image')">
+                                📸<br>Document in Image
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="12" onclick="selectConcept(12, 'Video→Document')">
+                                🎞️<br>Video in Document
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="13" onclick="selectConcept(13, 'Document→Video')">
+                                📹<br>Document in Video
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="14" onclick="selectConcept(14, 'Audio→Document')">
+                                🔊<br>Audio in Document
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="15" onclick="selectConcept(15, 'Document→Audio')">
+                                📻<br>Document in Audio
+                            </button>
+                            <button type="button" class="concept-btn" data-concept="16" onclick="selectConcept(16, 'Document→Document')">
+                                📋<br>Document in Document
+                            </button>
+                        </div>
+                        
+                        <div id="concept-description" class="concept-description">
+                            📌 <strong>Concept 1: Image → Image</strong><br>
+                            Hide any image file inside another image using LSB steganography. The cover image must be larger than the secret image.
+                        </div>
+
+                        <div class="optimization-status">
+                            <h4>⚡ Optimization Features Active</h4>
+                            <div class="optimization-badges">
+                                <span class="opt-badge enabled">✓ GPU Acceleration</span>
+                                <span class="opt-badge enabled">✓ Streaming Encryption</span>
+                                <span class="opt-badge enabled">✓ Parallel Processing</span>
+                                <span class="opt-badge enabled">✓ Progress Tracking</span>
+                            </div>
+                            <small style="display: block; margin-top: 10px; color: #0c5460;">
+                                <strong>Expected performance:</strong> 4-6x faster than standard steganography. 1GB files: 30-45 seconds.
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="keys-status">
+                        <h3>🔑 Your Encryption Keys</h3>
+                        <p>Your personal RSA key pair is active. Files hidden with your public key can only be extracted with your private key.</p>
+                        <span class="status-badge active">✓ Keys Ready</span>
+                    </div>
+
+                    <div id="hideFileAlert" class="alert"></div>
+
+                    <form id="hideFileForm">
+                        <div class="form-group">
+                            <label>Secret File (to hide)</label>
+                            <div class="file-input-wrapper" onclick="document.getElementById('secretFile').click()">
+                                <p>📁 Click to select file or drag & drop</p>
+                                <p style="font-size: 12px; color: #999;">Any file type supported</p>
+                                <input type="file" id="secretFile" name="secretFile" required>
+                            </div>
+                            <div id="secretFileList" class="file-list" style="display: none;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cover Media (image/audio/video)</label>
+                            <div class="file-input-wrapper" onclick="document.getElementById('coverFile').click()">
+                                <p>📁 Click to select cover media or drag & drop</p>
+                                <p style="font-size: 12px; color: #999;">PNG, JPG, MP3, WAV, MP4, AVI supported</p>
+                                <input type="file" id="coverFile" name="coverFile" required accept="image/*,audio/*,video/*">
+                            </div>
+                            <div id="coverFileList" class="file-list" style="display: none;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>📤 Share With (Optional - Select Recipients)</label>
+                            <select id="fileRecipients" name="recipients" multiple style="min-height: 100px; padding: 10px;">
+                                <option value="" disabled>-- Hold Ctrl/Cmd to select multiple users --</option>
+                            </select>
+                            <small style="display: block; margin-top: 5px; color: #666;">Leave empty to keep file private. Selected users can decrypt your data.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Encryption Method</label>
+                            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                                <label style="display: flex; align-items: center; font-weight: normal; margin: 0;">
+                                    <input type="radio" name="encryptionMethod" value="rsa" style="margin-right: 10px;">
+                                    <span><strong>🔐 RSA Only</strong> - Encrypt with your public RSA key (highly secure)</span>
+                                </label>
+                                <label style="display: flex; align-items: center; font-weight: normal; margin: 0;">
+                                    <input type="radio" name="encryptionMethod" value="password" style="margin-right: 10px;">
+                                    <span><strong>🔑 Password Only</strong> - Encrypt with password (requires password to extract)</span>
+                                </label>
+                                <label style="display: flex; align-items: center; font-weight: normal; margin: 0;">
+                                    <input type="radio" name="encryptionMethod" value="hybrid" checked style="margin-right: 10px;">
+                                    <span><strong>⭐ Hybrid (Recommended)</strong> - RSA + Password (best security)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="passwordGroup">
+                            <label>Encryption Password</label>
+                            <input type="password" id="hidePassword" name="password" placeholder="Strong password for secret file">
+                            <small id="passwordHint">Required for Password and Hybrid encryption methods. Not needed for RSA-Only.</small>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Hide File</button>
+                    </form>
+
+                    <div id="hideFileOutput" class="output-files" style="display: none;">
+                        <h3>✅ File Successfully Hidden!</h3>
+                        <div id="hideFileResult"></div>
+                    </div>
+                </div>
+
+                <!-- Extract File Section -->
+                <div id="extract-file" class="section">
+                    <h2>🔓 Extract Hidden File</h2>
+                    
+                    <div class="keys-status">
+                        <h3>ℹ️ How It Works</h3>
+                        <p>Upload a stego file that was created with your public key. Your private key will automatically decrypt it if you know the password used during hiding.</p>
+                    </div>
+
+                    <div id="extractFileAlert" class="alert"></div>
+
+                    <form id="extractFileForm">
+                        <div class="form-group">
+                            <label>Stego File (with hidden data)</label>
+                            <div class="file-input-wrapper" onclick="document.getElementById('stegoFile').click()">
+                                <p>📁 Click to select stego file or drag & drop</p>
+                                <input type="file" id="stegoFile" name="stegoFile" required>
+                            </div>
+                            <div id="stegoFileList" class="file-list" style="display: none;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Decryption Password</label>
+                            <input type="password" id="extractPassword" name="password" placeholder="Password used during hiding">
+                        </div>
+
+                        <button type="submit" class="submit-btn">Extract File</button>
+                    </form>
+
+                    <div id="extractFileOutput" class="output-files" style="display: none;">
+                        <h3>✅ File Successfully Extracted!</h3>
+                        <div id="extractFileResult"></div>
+                    </div>
+                </div>
+
+                <!-- Hide Message Section -->
+                <div id="hide-message" class="section">
+                    <h2>💬 Hide Secret Message</h2>
+
+                    <div id="hideMessageAlert" class="alert"></div>
+
+                    <form id="hideMessageForm">
+                        <div class="form-group">
+                            <label>Secret Message</label>
+                            <textarea id="secretMessage" name="message" placeholder="Enter your secret message..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cover Media</label>
+                            <div class="file-input-wrapper" onclick="document.getElementById('coverMediaMessage').click()">
+                                <p>📁 Click to select cover media or drag & drop</p>
+                                <input type="file" id="coverMediaMessage" name="coverMedia" required accept="image/*,audio/*,video/*">
+                            </div>
+                            <div id="coverMediaMessageList" class="file-list" style="display: none;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>📤 Share With (Optional - Select Recipients)</label>
+                            <select id="messageRecipients" name="recipients" multiple style="min-height: 100px; padding: 10px;">
+                                <option value="" disabled>-- Hold Ctrl/Cmd to select multiple users --</option>
+                            </select>
+                            <small style="display: block; margin-top: 5px; color: #666;">Leave empty to keep message private. Selected users can decrypt your data.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Encryption Method</label>
+                            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                                <label style="display: flex; align-items: center; font-weight: normal; margin: 0;">
+                                    <input type="radio" name="messageEncryptionMethod" value="rsa" style="margin-right: 10px;">
+                                    <span><strong>🔐 RSA Only</strong> - Encrypt with your public RSA key (highly secure)</span>
+                                </label>
+                                <label style="display: flex; align-items: center; font-weight: normal; margin: 0;">
+                                    <input type="radio" name="messageEncryptionMethod" value="password" style="margin-right: 10px;">
+                                    <span><strong>🔑 Password Only</strong> - Encrypt with password (requires password to extract)</span>
+                                </label>
+                                <label style="display: flex; align-items: center; font-weight: normal; margin: 0;">
+                                    <input type="radio" name="messageEncryptionMethod" value="hybrid" checked style="margin-right: 10px;">
+                                    <span><strong>⭐ Hybrid (Recommended)</strong> - RSA + Password (best security)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="messagePasswordGroup">
+                            <label>Encryption Password</label>
+                            <input type="password" id="messagePassword" name="password" placeholder="Strong password">
+                            <small id="messagePasswordHint">Required for Password and Hybrid encryption methods. Not needed for RSA-Only.</small>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Hide Message</button>
+                    </form>
+
+                    <div id="hideMessageOutput" class="output-files" style="display: none;">
+                        <h3>✅ Message Successfully Hidden!</h3>
+                        <div id="hideMessageResult"></div>
+                    </div>
+                </div>
+
+                <!-- Extract Message Section -->
+                <div id="extract-message" class="section">
+                    <h2>💭 Extract Hidden Message</h2>
+
+                    <div id="extractMessageAlert" class="alert"></div>
+
+                    <form id="extractMessageForm">
+                        <div class="form-group">
+                            <label>Stego File</label>
+                            <div class="file-input-wrapper" onclick="document.getElementById('stegoMediaMessage').click()">
+                                <p>📁 Click to select stego file or drag & drop</p>
+                                <input type="file" id="stegoMediaMessage" name="stegoMedia" required>
+                            </div>
+                            <div id="stegoMediaMessageList" class="file-list" style="display: none;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Decryption Password</label>
+                            <input type="password" id="extractMessagePassword" name="password" placeholder="Password used during hiding">
+                        </div>
+
+                        <button type="submit" class="submit-btn">Extract Message</button>
+                    </form>
+
+                    <div id="extractMessageOutput" style="display: none; margin-top: 20px;">
+                        <div class="alert success" style="display: block;">
+                            <h3>✅ Message Extracted:</h3>
+                            <p id="extractedMessage" style="margin-top: 10px; word-wrap: break-word;"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My RSA Keys Section -->
+                <div id="my-keys" class="section">
+                    <h2>🔑 My RSA Key Pair</h2>
+
+                    <div class="keys-status">
+                        <h3>Your Personal Encryption Keys</h3>
+                        <p>These keys are unique to your account and stored securely. Your public key is shared with others to encrypt files for you. Your private key stays with you and is used to decrypt files.</p>
+                        <span class="status-badge active">✓ Keys Generated</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Public Key (Share with others)</label>
+                        <textarea id="publicKeyDisplay" readonly style="height: 200px; font-family: 'Courier New', monospace; font-size: 12px;"></textarea>
+                        <button type="button" class="submit-btn" style="margin-top: 10px;" onclick="copyPublicKey()">Copy Public Key</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Private Key (Keep Secret!)</label>
+                        <textarea id="privateKeyDisplay" readonly style="height: 200px; font-family: 'Courier New', monospace; font-size: 12px; background: #ffebee;" placeholder="Load private key..."></textarea>
+                        <button type="button" class="submit-btn" style="margin-top: 10px;" onclick="loadPrivateKey()">Load Private Key (Decrypt to View)</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Verify Your Keys</label>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
+                            ✓ Public key format: PEM (X.509 SubjectPublicKeyInfo)<br>
+                            ✓ Private key format: PEM (PKCS#8)<br>
+                            ✓ Key size: 2048 bits<br>
+                            ✓ Algorithm: RSA with OAEP padding
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Shared Files Section -->
+                <div id="shared-files" class="section">
+                    <h2>📤 Files Shared With You</h2>
+
+                    <div id="sharedFilesAlert" class="alert"></div>
+
+                    <div id="sharedFilesList">
+                        <p style="color: #666; text-align: center; padding: 30px;">
+                            No files shared with you yet. When others share files encrypted with your public key, they will appear here.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Admin Panel Section -->
+                <div id="admin-panel" class="section">
+                    <h2>⚙️ Admin Control Panel</h2>
+                    
+                    <div class="admin-tabs">
+                        <button class="admin-tab-btn active" onclick="switchAdminTab('users')">👥 Manage Users</button>
+                        <button class="admin-tab-btn" onclick="switchAdminTab('stats')">📊 Statistics</button>
+                        <button class="admin-tab-btn" onclick="switchAdminTab('audit')">🔍 Audit Log</button>
+                    </div>
+
+                    <!-- Users Management -->
+                    <div id="admin-users" class="admin-tab-content active">
+                        <h3>Manage System Users</h3>
+                        <div style="margin-bottom: 20px;">
+                            <button class="btn-primary" onclick="loadAllUsers()">Reload Users</button>
+                            <input type="text" id="userSearch" placeholder="Search users..." onkeyup="filterUsers()" style="padding: 8px; width: 200px; margin-left: 10px;">
+                        </div>
+                        <div id="usersList" style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                            <p style="color: #666;">Loading users...</p>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div id="admin-stats" class="admin-tab-content">
+                        <h3>System Statistics</h3>
+                        <div id="statsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <p style="color: #666;">Loading statistics...</p>
+                        </div>
+                    </div>
+
+                    <!-- Audit Log -->
+                    <div id="admin-audit" class="admin-tab-content">
+                        <h3>Audit Log</h3>
+                        <div style="margin-bottom: 15px;">
+                            <button class="btn-primary" onclick="loadAuditLog()">Reload Log</button>
+                        </div>
+                        <div id="auditLogList" style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                            <p style="color: #666;">Loading audit log...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/me');
+                if (!response.ok) {
+                    window.location.href = '/signin';
+                    return;
+                }
+                const data = await response.json();
+                if (data.success) {
+                    window.currentUser = data.user;
+                    document.getElementById('display-username').textContent = data.user.username;
+                    document.getElementById('display-email').textContent = data.user.email;
+                    
+                    // Show admin panel if user is admin
+                    if (data.user.username === 'admin') {
+                        document.getElementById('admin-btn').style.display = 'block';
+                    }
+                    
+                    loadPublicKey();
+                } else {
+                    window.location.href = '/signin';
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = '/signin';
+            }
+        }
+
+        // Switch sections
+        function switchSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Load public key
+        async function loadPublicKey() {
+            try {
+                const response = await fetch('/api/keys/public');
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('publicKeyDisplay').value = data.public_key;
+                }
+            } catch (error) {
+                console.error('Failed to load public key:', error);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // ADMIN PANEL FUNCTIONS
+        // ═══════════════════════════════════════════════════════════
+
+        function switchAdminTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.admin-tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById('admin-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load data for the tab
+            if (tabName === 'users' && document.getElementById('admin-users').innerHTML.includes('Loading')) {
+                loadAllUsers();
+            } else if (tabName === 'stats' && document.getElementById('admin-stats').innerHTML.includes('Loading')) {
+                loadStats();
+            } else if (tabName === 'audit' && document.getElementById('admin-audit').innerHTML.includes('Loading')) {
+                loadAuditLog();
+            }
+        }
+
+        async function loadAllUsers() {
+            try {
+                const response = await fetch('/api/admin/users?limit=100');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const usersList = document.getElementById('usersList');
+                    if (data.data.length === 0) {
+                        usersList.innerHTML = '<p style="color: #666; text-align: center;">No users found</p>';
+                        return;
+                    }
+                    
+                    usersList.innerHTML = data.data.map(user => `
+                        <div class="user-item" style="border-left: 4px solid ${user.status === 'suspended' ? '#ff6b6b' : '#4caf50'};">
+                            <div class="user-info">
+                                <div>
+                                    <strong>${user.username}</strong> 
+                                    ${user.role === 'admin' ? '<span style="background: #ff6b6b; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 5px;">ADMIN</span>' : ''}
+                                    ${user.status === 'suspended' ? '<span style="background: #ff6b6b; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 5px;">🚫 SUSPENDED</span>' : '<span style="background: #4caf50; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 5px;">✓ ACTIVE</span>'}
+                                    <br>
+                                    <small style="color: #666;">${user.email}</small>
+                                    <br>
+                                    <small style="color: #999;">ID: ${user.id} | Created: ${new Date(user.created_at).toLocaleDateString()}</small>
+                                </div>
+                                <div class="user-actions">
+                                    ${user.status === 'suspended' ? 
+                                        `<button class="btn-small" style="background-color: green; color: white;" onclick="activateUser(${user.id}, '${user.username}')">Reactivate</button>` :
+                                        `<button class="btn-small" onclick="suspendUser(${user.id}, '${user.username}')">Suspend</button>`
+                                    }
+                                    <button class="btn-small danger" style="display: ${user.username === 'admin' ? 'none' : 'inline-block'}" onclick="deleteUser(${user.id}, '${user.username}')">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    document.getElementById('usersList').innerHTML = `<p style="color: red;">Error: ${data.error || 'Failed to load users'}</p>`;
+                }
+            } catch (error) {
+                console.error('Failed to load users:', error);
+                document.getElementById('usersList').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/admin/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const statsList = document.getElementById('statsList');
+                    statsList.innerHTML = `
+                        <div class="stat-box">
+                            <div class="stat-label">Total Users</div>
+                            <div class="stat-number">${data.total_users}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Active Sessions</div>
+                            <div class="stat-number">${data.active_sessions}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Total Operations</div>
+                            <div class="stat-number">${data.total_operations}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Hide Operations</div>
+                            <div class="stat-number">${data.hide_operations}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Extract Operations</div>
+                            <div class="stat-number">${data.extract_operations}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Failed Operations</div>
+                            <div class="stat-number">${data.failed_operations}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">RSA Operations</div>
+                            <div class="stat-number">${data.rsa_operations}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Password Operations</div>
+                            <div class="stat-number">${data.password_operations}</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+                document.getElementById('statsList').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+
+        async function loadAuditLog() {
+            try {
+                const response = await fetch('/api/admin/audit-log?limit=50');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const auditLogList = document.getElementById('auditLogList');
+                    if (data.data.length === 0) {
+                        auditLogList.innerHTML = '<p style="color: #666; text-align: center;">No audit logs found</p>';
+                        return;
+                    }
+                    
+                    auditLogList.innerHTML = data.data.map(log => `
+                        <div class="audit-item">
+                            <strong>${log.user}</strong> - ${log.action}
+                            <br>
+                            <small style="color: #666;">Resource: ${log.resource} | Status: <strong>${log.status}</strong></small>
+                            <br>
+                            <small style="color: #999;">${new Date(log.timestamp).toLocaleString()} | IP: ${log.ipAddress}</small>
+                            ${log.details && log.details !== 'No details' ? `<br><small style="color: #666;">Details: ${log.details}</small>` : ''}
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load audit log:', error);
+                document.getElementById('auditLogList').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            document.querySelectorAll('.user-item').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        }
+
+        async function suspendUser(userId, username) {
+            if (!confirm(`Suspend user "${username}"?\n\nThis will:\n✓ Prevent new logins\n✓ Invalidate all existing sessions\n✓ Block all API access\n\nContinue?`)) return;
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'status=suspended'
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert(`✅ User "${username}" has been suspended!\n\n• Existing sessions invalidated\n• User cannot login anymore\n• All API access blocked`);
+                    loadAllUsers();
+                } else {
+                    alert(`❌ Error: ${data.detail || 'Failed to suspend user'}`);
+                }
+            } catch (error) {
+                alert(`❌ Error: ${error.message}`);
+            }
+        }
+
+        async function deleteUser(userId, username) {
+            if (!confirm(`Delete user "${username}"? This cannot be undone!`)) return;
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert('User deleted successfully');
+                    loadAllUsers();
+                } else {
+                    alert(`Error: ${data.detail}`);
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        async function activateUser(userId, username) {
+            if (!confirm(`Reactivate user "${username}"?`)) return;
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'status=active'
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert(`✅ User "${username}" has been reactivated!\n\n• Account is now active\n• User can login again`);
+                    loadAllUsers();
+                } else {
+                    alert(`❌ Error: ${data.detail || 'Failed to reactivate user'}`);
+                }
+            } catch (error) {
+                alert(`❌ Error: ${error.message}`);
+            }
+        }
+
+        // Load private key
+        async function loadPrivateKey() {
+            const password = prompt('Enter your password to decrypt private key:');
+            if (!password) return;
+
+            try {
+                const response = await fetch('/api/keys/private', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({password})
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('privateKeyDisplay').value = data.private_key;
+                    showAlert('Private key loaded. Keep it secure!', 'info', 'keys');
+                } else {
+                    showAlert(data.error || 'Failed to load private key', 'error', 'keys');
+                }
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error', 'keys');
+            }
+        }
+
+        // Copy public key
+        function copyPublicKey() {
+            const textarea = document.getElementById('publicKeyDisplay');
+            textarea.select();
+            document.execCommand('copy');
+            showAlert('Public key copied to clipboard!', 'success', 'keys');
+        }
+
+        // Show alert
+        function showAlert(message, type, section = '') {
+            const alertId = section ? `${section}Alert` : 'alert';
+            const alertDiv = document.getElementById(alertId);
+            if (alertDiv) {
+                alertDiv.textContent = message;
+                alertDiv.className = `alert ${type}`;
+                
+                if (type === 'error') {
+                    setTimeout(() => {
+                        alertDiv.className = 'alert';
+                    }, 5000);
+                }
+            }
+        }
+
+        // Logout
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/api/logout', {method: 'POST'}).then(() => {
+                    window.location.href = '/signin';
+                });
+            }
+        }
+
+        // File input handling
+        function setupFileInput(inputId, listId) {
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+
+            input.addEventListener('change', () => {
+                if (input.files.length > 0) {
+                    const file = input.files[0];
+                    list.innerHTML = `
+                        <div class="file-item last">
+                            <div class="file-info">
+                                <span class="file-name">📄 ${file.name}</span>
+                                <span class="file-size">${formatBytes(file.size)}</span>
+                            </div>
+                            <button type="button" class="remove-btn" onclick="document.getElementById('${inputId}').value=''; document.getElementById('${listId}').style.display='none';">Remove</button>
+                        </div>
+                    `;
+                    list.style.display = 'block';
+                }
+            });
+
+            // Drag and drop
+            const wrapper = input.parentElement;
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                wrapper.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                wrapper.addEventListener(eventName, () => wrapper.style.background = '#e8f4f8');
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                wrapper.addEventListener(eventName, () => wrapper.style.background = '#f9f9f9');
+            });
+
+            wrapper.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                input.files = dt.files;
+                input.dispatchEvent(new Event('change'));
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // Handle encryption method change
+        document.querySelectorAll('input[name="encryptionMethod"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const passwordInput = document.getElementById('hidePassword');
+                const passwordGroup = document.getElementById('passwordGroup');
+                const passwordHint = document.getElementById('passwordHint');
+                
+                switch(this.value) {
+                    case 'rsa':
+                        passwordGroup.style.display = 'none';
+                        passwordInput.value = '';
+                        passwordInput.required = false;
+                        passwordInput.placeholder = 'Optional - leave empty for RSA-only encryption';
+                        passwordHint.textContent = 'Optional. If empty, RSA encryption only will be used.';
+                        break;
+                    case 'password':
+                        passwordGroup.style.display = 'block';
+                        passwordInput.required = true;
+                        passwordInput.placeholder = 'Required - password for encryption';
+                        passwordHint.textContent = 'Required. Data will be encrypted with password only.';
+                        break;
+                    case 'hybrid':
+                        passwordGroup.style.display = 'block';
+                        passwordInput.required = true;
+                        passwordInput.placeholder = 'Required - password for encryption';
+                        passwordHint.textContent = 'Required. Data will be encrypted with RSA + password (recommended).';
+                        break;
+                }
+            });
+        });
+        
+        // Initialize password visibility on page load
+        const initialRadio = document.querySelector('input[name="encryptionMethod"]:checked');
+        if (initialRadio && initialRadio.value === 'rsa') {
+            document.getElementById('passwordGroup').style.display = 'none';
+        }
+
+        // Form submissions
+        document.getElementById('hideFileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            console.log(`\n${'═'.repeat(70)}`);
+            console.log(`[HIDE-FILE] User submitting hide file operation`);
+            console.log(`[HIDE-FILE] Selected concept: #${window.selectedConcept}`);
+            
+            // DEBUG: Log selected concept at submission time
+            console.log(`[DEBUG-FORM] window.selectedConcept = ${window.selectedConcept}`);
+            console.log(`[DEBUG-FORM] conceptIdMap[${window.selectedConcept}] = ${conceptIdMap[window.selectedConcept]}`);
+            
+            // Get selected encryption method
+            const encryptionMethod = document.querySelector('input[name="encryptionMethod"]:checked').value;
+            const password = document.getElementById('hidePassword').value;
+            const secretFile = document.getElementById('secretFile').files[0];
+            const coverFile = document.getElementById('coverFile').files[0];
+            
+            console.log(`[HIDE-FILE] Encryption: ${encryptionMethod}`);
+            console.log(`[HIDE-FILE] Secret file: ${secretFile ? secretFile.name : 'MISSING'} (${secretFile ? (secretFile.size / 1024).toFixed(2) + 'KB' : 'N/A'})`);
+            console.log(`[HIDE-FILE] Cover file: ${coverFile ? coverFile.name : 'MISSING'} (${coverFile ? (coverFile.size / 1024).toFixed(2) + 'KB' : 'N/A'})`);
+            
+            // Get selected recipients
+            const recipientSelect = document.getElementById('fileRecipients');
+            const selectedRecipients = Array.from(recipientSelect.selectedOptions).map(opt => opt.value);
+            console.log(`[HIDE-FILE] Recipients selected: ${selectedRecipients.length}`);
+            
+            // Validate password requirement
+            if ((encryptionMethod === 'password' || encryptionMethod === 'hybrid') && !password) {
+                console.error(`[HIDE-FILE] Password required but not provided!`);
+                showAlert('Password is required for ' + encryptionMethod + ' encryption', 'error', 'hideFile');
+                return;
+            }
+            
+            if (!secretFile || !coverFile) {
+                console.error(`[HIDE-FILE] Missing files - cannot proceed`);
+                showAlert('Please select both secret and cover files', 'error', 'hideFile');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('data_file', secretFile);
+            formData.append('cover_file', coverFile);
+            
+            // Use the global conceptIdMap to get the concept ID
+            const conceptId = conceptIdMap[window.selectedConcept] || 'i2v';
+            console.log(`[HIDE-FILE] Sending concept_id: ${conceptId}`);
+            formData.append('concept_id', conceptId);
+            formData.append('encryption_type', encryptionMethod);
+            
+            if (password) {
+                formData.append('password', password);
+            }
+            
+            // Add recipients as JSON
+            if (selectedRecipients.length > 0) {
+                formData.append('recipients', JSON.stringify(selectedRecipients));
+            }
+
+            try {
+                const btn = e.target.querySelector('.submit-btn');
+                btn.classList.add('loading');
+                btn.disabled = true;
+
+                console.log(`[HIDE-FILE] Sending POST request to /api/hide-file`);
+                const response = await fetch('/api/hide-file', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log(`[FETCH] Response status: ${response.status} ${response.statusText}`);
+                
+                const data = await response.json();
+                console.log(`[FETCH] Response data:`, data);
+                
+                if (response.ok && data.success) {
+                    console.log(`[✓] SUCCESS: File hidden successfully!`);
+                    showAlert('File hidden successfully with ' + encryptionMethod.toUpperCase() + ' encryption!', 'success', 'hideFile');
+                    document.getElementById('hideFileResult').innerHTML = `<a href="${data.download_url}" class="download-btn" download>📥 Download Stego File</a>`;
+                    document.getElementById('hideFileOutput').style.display = 'block';
+                } else {
+                    const errorMsg = data.error || data.detail || 'Unknown error occurred';
+                    console.error(`[✗] ERROR: ${errorMsg}`);
+                    showAlert('Error: ' + errorMsg, 'error', 'hideFile');
+                }
+            } catch (error) {
+                console.error(`[✗] EXCEPTION:`, error);
+                console.error(`[✗] Stack:`, error.stack);
+                showAlert('Error: ' + error.message, 'error', 'hideFile');
+            } finally {
+                const btn = e.target.querySelector('.submit-btn');
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                console.log(`${'═'.repeat(70)}\n`);
+            }
+        });
+
+        document.getElementById('extractFileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            console.log(`\n${'═'.repeat(70)}`);
+            console.log(`[EXTRACT-FILE] User submitting extract file operation`);
+            
+            const stegoFile = document.getElementById('stegoFile').files[0];
+            const password = document.getElementById('extractPassword').value;
+            
+            console.log(`[EXTRACT-FILE] Stego file: ${stegoFile ? stegoFile.name : 'MISSING'} (${stegoFile ? (stegoFile.size / 1024).toFixed(2) + 'KB' : 'N/A'})`);
+            console.log(`[EXTRACT-FILE] Password provided: ${password ? 'Yes' : 'No'}`);
+            
+            if (!stegoFile) {
+                console.error(`[EXTRACT-FILE] No stego file selected`);
+                showAlert('Please select a stego file to extract', 'error', 'extractFile');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('stego_file', stegoFile);
+            formData.append('password', password);
+
+            try {
+                const btn = e.target.querySelector('.submit-btn');
+                btn.classList.add('loading');
+                btn.disabled = true;
+
+                console.log(`[EXTRACT-FILE] Sending POST request to /api/extract-file`);
+                const response = await fetch('/api/extract-file', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log(`[FETCH] Response status: ${response.status} ${response.statusText}`);
+                const data = await response.json();
+                console.log(`[FETCH] Response data:`, data);
+                
+                if (data.success) {
+                    console.log(`[✓] SUCCESS: File extracted successfully!`);
+                    showAlert('File extracted successfully!', 'success', 'extractFile');
+                    document.getElementById('extractFileResult').innerHTML = `<a href="${data.download_url}" class="download-btn" download>📥 Download Extracted File</a>`;
+                    document.getElementById('extractFileOutput').style.display = 'block';
+                } else {
+                    console.error(`[✗] ERROR: ${data.error || 'Failed to extract'}`);
+                    showAlert(data.error || 'Failed to extract file', 'error', 'extractFile');
+                }
+            } catch (error) {
+                console.error(`[✗] EXCEPTION:`, error);
+                showAlert('Error: ' + error.message, 'error', 'extractFile');
+            } finally {
+                const btn = e.target.querySelector('.submit-btn');
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                console.log(`${'═'.repeat(70)}\n`);
+            }
+        });
+
+        // Hide Message encryption method selection
+        document.querySelectorAll('input[name="messageEncryptionMethod"]').forEach((radio) => {
+            radio.addEventListener('change', () => {
+                const passwordInput = document.getElementById('messagePassword');
+                const passwordGroup = document.getElementById('messagePasswordGroup');
+                const passwordHint = document.getElementById('messagePasswordHint');
+
+                switch (radio.value) {
+                    case 'rsa':
+                        passwordGroup.style.display = 'none';
+                        passwordInput.value = '';
+                        passwordInput.required = false;
+                        passwordInput.placeholder = 'Optional - not needed for RSA encryption';
+                        passwordHint.textContent = 'Data will be encrypted with your RSA public key only.';
+                        break;
+                    case 'password':
+                        passwordGroup.style.display = 'block';
+                        passwordInput.required = true;
+                        passwordInput.placeholder = 'Required - password for encryption';
+                        passwordHint.textContent = 'Required. Data will be encrypted with password only.';
+                        break;
+                    case 'hybrid':
+                        passwordGroup.style.display = 'block';
+                        passwordInput.required = true;
+                        passwordInput.placeholder = 'Required - password for encryption';
+                        passwordHint.textContent = 'Required. Data will be encrypted with RSA + password (recommended).';
+                        break;
+                }
+            });
+        });
+        
+        // Initialize message password visibility on page load
+        const initialMessageRadio = document.querySelector('input[name="messageEncryptionMethod"]:checked');
+        if (initialMessageRadio && initialMessageRadio.value === 'rsa') {
+            document.getElementById('messagePasswordGroup').style.display = 'none';
+        }
+
+        document.getElementById('hideMessageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Get selected encryption method
+            const encryptionMethod = document.querySelector('input[name="messageEncryptionMethod"]:checked').value;
+            const password = document.getElementById('messagePassword').value;
+            
+            // Get selected recipients
+            const recipientSelect = document.getElementById('messageRecipients');
+            const selectedRecipients = Array.from(recipientSelect.selectedOptions).map(opt => opt.value);
+            
+            // Validate password requirement
+            if ((encryptionMethod === 'password' || encryptionMethod === 'hybrid') && !password) {
+                showAlert('Password is required for ' + encryptionMethod + ' encryption', 'error', 'hideMessage');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('message', document.getElementById('secretMessage').value);
+            formData.append('cover_file', document.getElementById('coverMediaMessage').files[0]);
+            formData.append('encryption_method', encryptionMethod);
+            if (password) {
+                formData.append('password', password);
+            }
+            // Add recipients as JSON
+            if (selectedRecipients.length > 0) {
+                formData.append('recipients', JSON.stringify(selectedRecipients));
+            }
+
+            try {
+                const btn = e.target.querySelector('.submit-btn');
+                btn.classList.add('loading');
+                btn.disabled = true;
+
+                const response = await fetch('/api/hide-message', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log(`[FETCH] Response status: ${response.status}`);
+                
+                const data = await response.json();
+                console.log(`[FETCH] Response data:`, data);
+                
+                if (response.ok && data.success) {
+                    showAlert('Message hidden successfully with ' + encryptionMethod.toUpperCase() + ' encryption!', 'success', 'hideMessage');
+                    document.getElementById('hideMessageResult').innerHTML = `<a href="${data.download_url}" class="download-btn" download>📥 Download Stego File</a>`;
+                    document.getElementById('hideMessageOutput').style.display = 'block';
+                } else {
+                    const errorMsg = data.error || data.detail || 'Unknown error occurred';
+                    console.log(`[FETCH] Error: ${errorMsg}`);
+                    showAlert('Error: ' + errorMsg, 'error', 'hideMessage');
+                }
+            } catch (error) {
+                console.error(`[FETCH] Exception:`, error);
+                showAlert('Error: ' + error.message, 'error', 'hideMessage');
+            } finally {
+                const btn = e.target.querySelector('.submit-btn');
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('extractMessageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('stego_file', document.getElementById('stegoMediaMessage').files[0]);
+            formData.append('password', document.getElementById('extractMessagePassword').value);
+
+            try {
+                const btn = e.target.querySelector('.submit-btn');
+                btn.classList.add('loading');
+                btn.disabled = true;
+
+                const response = await fetch('/api/extract-message', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('Message extracted successfully!', 'success', 'extractMessage');
+                    document.getElementById('extractedMessage').textContent = data.extracted_message;
+                    document.getElementById('extractMessageOutput').style.display = 'block';
+                } else {
+                    showAlert(data.error || 'Failed to extract message', 'error', 'extractMessage');
+                }
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error', 'extractMessage');
+            } finally {
+                const btn = e.target.querySelector('.submit-btn');
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        });
+
+        // Load recipients for multi-recipient encryption
+        async function loadRecipients() {
+            try {
+                const response = await fetch('/api/user/users');
+                const data = await response.json();
+                
+                if (data.success && data.users.length > 0) {
+                    const fileRecipientsSelect = document.getElementById('fileRecipients');
+                    const messageRecipientsSelect = document.getElementById('messageRecipients');
+                    
+                    // Clear previous options (except the header)
+                    while (fileRecipientsSelect.options.length > 1) {
+                        fileRecipientsSelect.remove(1);
+                    }
+                    while (messageRecipientsSelect.options.length > 1) {
+                        messageRecipientsSelect.remove(1);
+                    }
+                    
+                    // Add user options
+                    data.users.forEach(user => {
+                        const opt1 = document.createElement('option');
+                        opt1.value = user.id;
+                        opt1.text = `${user.username} ${user.email ? "(" + user.email + ")" : ""}`;
+                        fileRecipientsSelect.appendChild(opt1);
+                        
+                        const opt2 = document.createElement('option');
+                        opt2.value = user.id;
+                        opt2.text = `${user.username} ${user.email ? "(" + user.email + ")" : ""}`;
+                        messageRecipientsSelect.appendChild(opt2);
+                    });
+                    
+                    console.log(`[+] Loaded ${data.users.length} users for sharing`);
+                } else {
+                    console.log('[*] No other users available for sharing');
+                }
+            } catch (error) {
+                console.error('[!] Error loading recipients:', error);
+            }
+        }
+
+        // Initialize
+        checkAuth();
+        loadRecipients();
+        setupFileInput('secretFile', 'secretFileList');
+        setupFileInput('coverFile', 'coverFileList');
+        setupFileInput('coverMediaMessage', 'coverMediaMessageList');
+        setupFileInput('stegoFile', 'stegoFileList');
+        setupFileInput('stegoMediaMessage', 'stegoMediaMessageList');
+
+        // Nine Concepts Handler
+        const conceptDescriptions = {
+            1: {
+                name: "Image → Image",
+                desc: "Hide any image file inside another image using LSB steganography. The cover image must be larger than the secret image.",
+                emoji: "🖼️"
+            },
+            2: {
+                name: "Image → Video",
+                desc: "Hide an image file inside a video by embedding it in the LSB of video frames. Requires sufficient frame count capacity.",
+                emoji: "🎬"
+            },
+            3: {
+                name: "Image → Audio",
+                desc: "Hide an image file inside audio by embedding it in the LSB of audio samples. Capacity depends on audio duration.",
+                emoji: "🔊"
+            },
+            4: {
+                name: "Video → Video",
+                desc: "Hide a video file inside another video (GPU-accelerated). Requires large cover video with sufficient frame count.",
+                emoji: "⚡"
+            },
+            5: {
+                name: "Video → Image",
+                desc: "Hide a video file inside a high-resolution image. Requires very large images (4K+ recommended).",
+                emoji: "📹"
+            },
+            6: {
+                name: "Video → Audio",
+                desc: "Hide a video file inside long-duration audio. Requires 10+ minutes of audio for typical video.",
+                emoji: "🎥"
+            },
+            7: {
+                name: "Audio → Audio",
+                desc: "Hide an audio file inside another audio track. Perfect for stealth communication and secure audio sharing.",
+                emoji: "🎵"
+            },
+            8: {
+                name: "Audio → Image",
+                desc: "Hide an audio file inside an image using LSB steganography. Allows image transmission with hidden audio.",
+                emoji: "🎶"
+            },
+            9: {
+                name: "Audio → Video",
+                desc: "Hide an audio file inside a video. Audio goes into frame LSBs while video retains its original audio track.",
+                emoji: "🎼"
+            },
+            10: {
+                name: "Image → Document",
+                desc: "Hide an image file inside a document (PDF, DOC, TXT). Embeds image data within document structure.",
+                emoji: "📄"
+            },
+            11: {
+                name: "Document → Image",
+                desc: "Hide a document (PDF, DOC, TXT) inside an image using LSB steganography. Perfect for secure document transmission.",
+                emoji: "📸"
+            },
+            12: {
+                name: "Video → Document",
+                desc: "Hide a video file inside a document. Requires large documents to accommodate video data.",
+                emoji: "🎞️"
+            },
+            13: {
+                name: "Document → Video",
+                desc: "Hide a document inside a video file. Provides strong concealment with high capacity for large documents.",
+                emoji: "📹"
+            },
+            14: {
+                name: "Audio → Document",
+                desc: "Hide an audio file inside a document. Allows audio transmission disguised as a regular document.",
+                emoji: "🔊"
+            },
+            15: {
+                name: "Document → Audio",
+                desc: "Hide a document inside an audio file. Allows document transmission disguised as music or voice.",
+                emoji: "📻"
+            },
+            16: {
+                name: "Document → Document",
+                desc: "Hide one document inside another document. Enables secure document-in-document steganography.",
+                emoji: "📋"
+            }
+        };
+
+        function selectConcept(conceptNum, conceptName) {
+            console.log(`\n${'═'.repeat(60)}`);
+            console.log(`[CONCEPT] User clicked concept #${conceptNum}`);
+            console.log(`[CONCEPT] Name: ${conceptName}`);
+            
+            try {
+                // Update active button
+                console.log(`[DEBUG] Searching for concept buttons...`);
+                const buttons = document.querySelectorAll('.concept-btn');
+                console.log(`[DEBUG] Found ${buttons.length} concept buttons`);
+                
+                buttons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                const activeBtn = document.querySelector(`[data-concept="${conceptNum}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                    console.log(`[✓] Button #${conceptNum} marked as active`);
+                } else {
+                    console.error(`[✗] Could not find button with data-concept="${conceptNum}"`);
+                }
+
+                // Update description
+                console.log(`[DEBUG] Fetching description for concept ${conceptNum}...`);
+                const desc = conceptDescriptions[conceptNum];
+                if (desc) {
+                    console.log(`[✓] Description found: ${desc.name}`);
+                    const descDiv = document.getElementById('concept-description');
+                    if (descDiv) {
+                        descDiv.innerHTML = `
+                            <strong style="font-size: 14px;">${desc.emoji} Concept ${conceptNum}: ${desc.name}</strong><br>
+                            ${desc.desc}
+                        `;
+                        console.log(`[✓] Description div updated`);
+                    } else {
+                        console.error(`[✗] Could not find concept-description div`);
+                    }
+                } else {
+                    console.error(`[✗] No description found for concept ${conceptNum}`);
+                    console.log(`[DEBUG] Available descriptions:`, Object.keys(conceptDescriptions));
+                }
+
+                // Update file input labels
+                console.log(`[DEBUG] Updating file input labels...`);
+                const secretFileInput = document.getElementById('secretFile');
+                const coverFileInput = document.getElementById('coverFile');
+                
+                console.log(`[DEBUG] secretFileInput exists: ${!!secretFileInput}`);
+                console.log(`[DEBUG] coverFileInput exists: ${!!coverFileInput}`);
+                
+                if (secretFileInput && secretFileInput.parentElement) {
+                    const secretFileLabel = secretFileInput.parentElement.previousElementSibling;
+                    console.log(`[DEBUG] secretFileLabel found: ${!!secretFileLabel}, tag: ${secretFileLabel?.tagName}`);
+                    
+                    if (secretFileLabel && secretFileLabel.tagName === 'LABEL') {
+                        // Map concepts to media types
+                        const conceptInfo = {
+                            1: { secret: 'Image', secretType: 'image', cover: 'Video', coverType: 'video' },
+                            2: { secret: 'Image', secretType: 'image', cover: 'Image', coverType: 'image' },
+                            3: { secret: 'Image', secretType: 'image', cover: 'Audio', coverType: 'audio' },
+                            4: { secret: 'Video', secretType: 'video', cover: 'Video', coverType: 'video' },
+                            5: { secret: 'Video', secretType: 'video', cover: 'Image', coverType: 'image' },
+                            6: { secret: 'Video', secretType: 'video', cover: 'Audio', coverType: 'audio' },
+                            7: { secret: 'Audio', secretType: 'audio', cover: 'Audio', coverType: 'audio' },
+                            8: { secret: 'Audio', secretType: 'audio', cover: 'Image', coverType: 'image' },
+                            9: { secret: 'Audio', secretType: 'audio', cover: 'Video', coverType: 'video' },
+                            10: { secret: 'Image', secretType: 'image', cover: 'Document', coverType: 'document' },
+                            11: { secret: 'Document', secretType: 'document', cover: 'Image', coverType: 'image' },
+                            12: { secret: 'Video', secretType: 'video', cover: 'Document', coverType: 'document' },
+                            13: { secret: 'Document', secretType: 'document', cover: 'Video', coverType: 'video' },
+                            14: { secret: 'Audio', secretType: 'audio', cover: 'Document', coverType: 'document' },
+                            15: { secret: 'Document', secretType: 'document', cover: 'Audio', coverType: 'audio' },
+                            16: { secret: 'Document', secretType: 'document', cover: 'Document', coverType: 'document' }
+                        };
+                        
+                        const info = conceptInfo[conceptNum];
+                        if (info) {
+                            secretFileLabel.textContent = `📁 Secret ${info.secret} (to hide)`;
+                            console.log(`[✓] Secret label updated: ${info.secret}`);
+                            
+                            // Find and update cover file label
+                            if (coverFileInput && coverFileInput.parentElement) {
+                                const coverFileLabel = coverFileInput.parentElement.previousElementSibling;
+                                if (coverFileLabel && coverFileLabel.tagName === 'LABEL') {
+                                    coverFileLabel.textContent = `📁 Cover ${info.cover} (container)`;
+                                    console.log(`[✓] Cover label updated: ${info.cover}`);
+                                }
+                            }
+                            
+                            // Update accept attribute for cover file
+                            const acceptMap = {
+                                image: 'image/*',
+                                audio: 'audio/*',
+                                video: 'video/*',
+                                document: '.pdf,.docx,.doc,.txt'
+                            };
+                            coverFileInput.accept = acceptMap[info.coverType] || 'image/*,audio/*,video/*';
+                            console.log(`[✓] File accept filter updated: ${info.coverType}`);
+                        } else {
+                            console.error(`[✗] No concept info found for concept ${conceptNum}`);
+                        }
+                    } else {
+                        console.warn(`[!] Warning: secretFileLabel not found or wrong tag type`);
+                    }
+                } else {
+                    console.warn(`[!] Warning: Could not find file input elements`);
+                }
+
+                // Store selected concept
+                window.selectedConcept = conceptNum;
+                console.log(`[✓] Stored window.selectedConcept = ${conceptNum}`);
+                console.log(`[SUCCESS] Concept ${conceptNum} (${conceptName}) fully selected!`);
+                console.log(`${'═'.repeat(60)}\n`);
+            } catch (error) {
+                console.error(`[ERROR] Exception in selectConcept:`, error);
+                console.error(`[ERROR] Stack:`, error.stack);
+            }
+        }
+
+        // Initialize with Concept 1
+        window.selectedConcept = 1;
+        
+        // Global concept ID map (number → backend concept ID)
+        const conceptIdMap = {
+            1: 'i2v',  // Image → Video
+            2: 'i2i',  // Image → Image
+            3: 'i2a',  // Image → Audio
+            4: 'v2v',  // Video → Video
+            5: 'v2i',  // Video → Image
+            6: 'v2a',  // Video → Audio
+            7: 'a2a',  // Audio → Audio
+            8: 'a2i',  // Audio → Image
+            9: 'a2v',  // Audio → Video
+            10: 'i2d', // Image → Document
+            11: 'd2i', // Document → Image
+            12: 'v2d', // Video → Document
+            13: 'd2v', // Document → Video
+            14: 'a2d', // Audio → Document
+            15: 'd2a', // Document → Audio
+            16: 'd2d'  // Document → Document
+        };
+
+        // Initialize
+        console.log(`\n${'═'.repeat(70)}`);
+        console.log(`[PAGE-INIT] Steganography Dashboard Initialized`);
+        console.log(`[PAGE-INIT] Checking authentication...`);
+        checkAuth();
+        console.log(`[PAGE-INIT] Checking conceptDescriptions...`);
+        console.log(`[PAGE-INIT] conceptDescriptions keys: ${Object.keys(conceptDescriptions).length}`);
+        console.log(`[PAGE-INIT] Available concepts: 1-16`);
+        console.log(`[PAGE-INIT] Selected Concept (default): ${window.selectedConcept}`);
+        console.log(`[PAGE-INIT] Loading recipients...`);
+        loadRecipients();
+        console.log(`[PAGE-INIT] Setting up file inputs...`);
+        setupFileInput('secretFile', 'secretFileList');
+        setupFileInput('coverFile', 'coverFileList');
+        setupFileInput('coverMediaMessage', 'coverMediaMessageList');
+        setupFileInput('stegoFile', 'stegoFileList');
+        setupFileInput('stegoMediaMessage', 'stegoMediaMessageList');
+        console.log(`[✓] PAGE READY - All systems initialized!`);
+        console.log(`${'═'.repeat(70)}\n`);
+        console.log(`[TIP] Open DevTools Console (F12) and click any concept to see debug logs!`);
+        console.log(`[TIP] Check console.log output for detailed operation information.`);
+        console.log(`${'═'.repeat(70)}\n`);
+    </script>
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# Render deployment requirements for Steganography Service
+# Optimized for 512MB RAM free tier
+
+# API Framework
+fastapi
+uvicorn[standard]
+python-multipart
+jinja2
+aiofiles
+gunicorn
+
+# Cryptography
+pycryptodome
+
+# Image Processing
+Pillow
+numpy
+imageio
+piexif
+scipy
+
+# Video Processing
+opencv-python-headless
+
+# Utilities
+multipledispatch

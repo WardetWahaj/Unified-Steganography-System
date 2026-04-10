@@ -1,0 +1,39 @@
+# Unified Steganography System - Requirements
+# Audio, Image, and Video Steganography with RSA Encryption
+
+# API Framework
+fastapi
+uvicorn[standard]
+python-multipart
+jinja2
+aiofiles
+gunicorn
+
+# Redis Queue (optional - for production)
+redis
+rq
+
+# Cryptography
+pycryptodome
+
+# Image Processing
+Pillow
+numpy
+imageio
+piexif
+scipy
+
+# Video Processing
+opencv-python
+
+# Audio Processing
+# (wave module is built-in)
+
+# Document Processing
+PyPDF2>=3.0.0
+pdfplumber>=0.10.0
+python-docx>=0.8.11
+lxml>=4.9.0
+
+# Utilities
+multipledispatch

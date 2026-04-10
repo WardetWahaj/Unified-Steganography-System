@@ -1,0 +1,489 @@
+═══════════════════════════════════════════════════════════════════════════════
+  STEGANOGRAPHY SYSTEM - FRONTEND PROJECT PROMPT
+  
+  A Modern, Secure File-Sharing Application with Military-Grade Encryption
+═══════════════════════════════════════════════════════════════════════════════
+
+
+## PROJECT OVERVIEW
+
+Build a **modern, secure file-sharing web application** that hides sensitive 
+files inside innocent-looking media (images, audio, video) with military-grade 
+encryption and multi-user support.
+
+Users can hide ANY file in ANY media type using LSB steganography, encrypted 
+with RSA-2048 + AES-256, with support for multi-recipient secure sharing.
+
+---
+
+## KEY FEATURES
+
+### 1. NINE STEGANOGRAPHY CONCEPTS
+Users select from 9 cross-media hiding methods:
+
+    🖼️  Image → Image        (hide image in image)
+    🎬  Image → Video        (hide image in video)
+    🔊  Image → Audio        (hide image in audio)
+    ⚡  Video → Video        (hide video in video) [GPU-accelerated]
+    📹  Video → Image        (hide video in image)
+    🎥  Video → Audio        (hide video in audio)
+    🎵  Audio → Audio        (hide audio in audio)
+    🎶  Audio → Image        (hide audio in image)
+    🎼  Audio → Video        (hide audio in video)
+
+
+### 2. AUTHENTICATION & USER MANAGEMENT
+    ✓ User signup/login with JWT tokens
+    ✓ Personal RSA key pair generation (2048-bit)
+    ✓ Public key sharing for file encryption
+    ✓ Private key management (encrypted storage)
+    ✓ User profile with key management
+
+
+### 3. FILE ENCRYPTION OPTIONS
+Three encryption methods available:
+
+    🔐 RSA-Only       - Encrypt with user's public key only
+                       Highly secure, no password needed
+    
+    🔑 Password-Only  - AES-256 encryption with password only
+                        Anyone with password can extract
+    
+    ⭐ Hybrid         - RSA + Password encryption (recommended)
+                       Maximum security, password required
+
+
+### 4. MULTI-RECIPIENT SHARING
+    ✓ Hide file with User A's encryption
+    ✓ Select Recipients B, C, D during hiding
+    ✓ Only authorized recipients can extract
+    ✓ Creator can always extract their own files
+    ✓ Each recipient has encrypted DEK (Data Encryption Key)
+    ✓ Metadata tracking (creator, recipients, timestamp)
+
+
+### 5. PERFORMANCE FEATURES
+    ⚡  4-6x speedup over standard steganography
+    🎮 GPU acceleration (NVIDIA CUDA)
+    📦 1GB+ file support (streaming mode)
+    📊 Real-time progress tracking
+    ⏱️  Expected: 30-45 seconds for 1GB hide
+
+
+### 6. ADDITIONAL FEATURES
+    ✓ Drag-and-drop file uploads
+    ✓ Real-time file preview
+    ✓ Download/share stego files
+    ✓ Extraction with password validation
+    ✓ File integrity verification
+    ✓ History of uploads/downloads
+
+
+---
+
+## USER INTERFACE SECTIONS
+
+### DASHBOARD LAYOUT
+
+┌──────────────────────────────────────────────────────────────┐
+│  🔒 Steganography Dashboard              User ▼ [Logout]   │
+├──────────────────────────────────────────────────────────────┤
+│                                                               │
+│  SIDEBAR MENU                  MAIN CONTENT AREA             │
+│  ┌──────────────────┐         ┌────────────────────────────┐│
+│  │ 🔐 Hide File     │         │ 📊 SELECT CONCEPT (9)      ││
+│  │ 🔓 Extract File  │         │ ┌─────┬─────┬─────┐        ││
+│  │ 💬 Hide Message  │         │ │ 🖼️  │ 🎬  │ 🔊  │        ││
+│  │ 💭 Extract Msg   │         │ ├─────┼─────┼─────┤        ││
+│  │ 🔑 My RSA Keys   │         │ │ ⚡  │ 📹  │ 🎥  │        ││
+│  │ 📤 Shared Files  │         │ ├─────┼─────┼─────┤        ││
+│  │ ⚙️  Settings     │         │ │ 🎵  │ 🎶  │ 🎼  │        ││
+│  │ 📋 Activity Log  │         │ └─────┴─────┴─────┘        ││
+│  └──────────────────┘         │                             ││
+│                               │ 💡 Description updates     ││
+│                               │ ⚡ Features: GPU ✓         ││
+│                               │                             ││
+│                               │ 🔑 Your Keys [Status]      ││
+│                               │                             ││
+│                               │ Secret: [📁 Select]        ││
+│                               │ Cover:  [📁 Select]        ││
+│                               │ Share:  [👥 Select Users]  ││
+│                               │ Method: [🗸 Hybrid]        ││
+│                               │ Pass:   [••••••••]         ││
+│                               │                             ││
+│                               │ [🔐 Hide File]            ││
+│                               └────────────────────────────┘│
+└──────────────────────────────────────────────────────────────┘
+
+
+### MAIN SECTIONS
+
+1. HIDE FILE
+   • Interactive 9-concept selector (3x3 grid)
+   • Dynamic description based on selected concept
+   • File type validation for selected concept
+   • Recipients multi-select dropdown
+   • Encryption method radio buttons
+   • Password input (shown/hidden based on method)
+   • Progress bar during hiding
+   • Download link for stego file
+
+2. EXTRACT FILE
+   • Upload stego file
+   • Password input (if needed)
+   • Extract button
+   • Progress tracking
+   • Download extracted file
+   • File integrity verification badge
+
+3. HIDE MESSAGE
+   • Text area for secret message
+   • Cover file upload
+   • Recipients selection
+   • Encryption method selection
+   • Character count indicator
+   • Download stego file
+
+4. EXTRACT MESSAGE
+   • Upload stego file
+   • Password input
+   • Extract and display message
+   • Copy-to-clipboard button
+   • Message metadata (creator, date)
+
+5. MY RSA KEYS
+   • Display public key (with copy button)
+   • View/decrypt private key
+   • Key fingerprint display
+   • Key generation date
+   • Key validity status
+   • Download public key
+
+6. SHARED FILES
+   • Files shared with me (as recipient)
+   • Filter by creator
+   • Sort by date/size
+   • Status indicator (encrypted/decrypted)
+   • Download/extract actions
+   • Sharing details (who shared, when, what encryption)
+
+7. ACTIVITY LOG
+   • Timeline of all hide/extract operations
+   • Metadata per operation
+   • Filter/search capabilities
+   • Export as CSV
+
+
+---
+
+## TECHNICAL HIGHLIGHTS
+
+### SECURITY
+    🔒 End-to-end encrypted (RSA-2048 + AES-256)
+    👤 User-based encryption (only you can decrypt)
+    🔐 Multi-recipient support (selective sharing)
+    📝 Metadata tracking and auditing
+    🛡️ Protection against known attacks
+
+
+### PERFORMANCE
+    ⚡  4-6x faster than traditional steganography
+    🎮 GPU-accelerated for video operations
+    📦 Handles 1GB+ files efficiently
+    🔄 Streaming encryption (no memory overload)
+    ⏱️  30-45 seconds expected for 1GB operations
+
+
+### USABILITY
+    🎨 Modern, clean UI with dark/light mode
+    📱 Fully responsive (mobile/tablet/desktop)
+    🎯 One-click concept selection
+    📊 Real-time progress tracking
+    ✅ Drag-and-drop file uploads
+    💡 Contextual help tooltips
+
+
+---
+
+## USER WORKFLOWS
+
+### WORKFLOW 1: Individual File Hiding
+    
+    1. User signs up → RSA keys auto-generated
+    2. Selects Concept (e.g., Image → Image)
+    3. Uploads secret file + cover media
+    4. Chooses encryption (Hybrid recommended)
+    5. Sets password
+    6. Clicks "Hide File" → See progress
+    7. Downloads stego file
+    8. Shares via email/cloud
+    9. Recipient uploads stego file
+    10. Recipient enters password
+    11. Clicks "Extract" → Gets original file
+
+
+### WORKFLOW 2: Multi-Recipient Sharing
+    
+    1. User A uploads file
+    2. Selects Recipients: User B, User C, User D
+    3. Chooses encryption (Hybrid)
+    4. Sets password
+    5. File encrypted once, 3 DEKs created (one per recipient + creator)
+    6. User A downloads stego file
+    7. User A sends to Users B, C, D (via email, etc.)
+    8. User B extracts with their private key
+    9. System asks for password
+    10. File decrypted and extracted
+    11. Users C and D can do the same
+
+
+### WORKFLOW 3: Video Hiding (GPU-Accelerated)
+    
+    1. User selects Concept: Video → Video
+    2. Uploads 1GB video (secret) + 4K video (cover)
+    3. GPU automatically selected (detected)
+    4. System processes in 32-frame batches
+    5. Real-time progress: 50% → 75% → 100%
+    6. Expected time: 30-45 seconds (vs 3-5 min on CPU)
+    7. Downloads stego video uncompressed
+
+
+### WORKFLOW 4: Message Hiding
+    
+    1. Selects "Hide Message" from menu
+    2. Types secret message
+    3. Selects concept (e.g., Audio → Audio)
+    4. Uploads cover audio file
+    5. Selects recipients (optional)
+    6. Clicks "Hide Message"
+    7. Downloads stego audio
+    8. Recipient extraction same as file
+
+
+---
+
+## UNIQUE SELLING POINTS
+
+    1. NINE CONCEPTS - More flexible than competitors
+       Supports 9 different cross-media combinations
+    
+    2. MULTI-RECIPIENT - Secure selective sharing
+       Encrypt once, recipients decrypt with private keys
+    
+    3. GPU ACCELERATION - 9-12x faster than CPU
+       NVIDIA CUDA optimization for video operations
+    
+    4. MILITARY ENCRYPTION - RSA-2048 + AES-256
+       Unbreakable encryption standards
+    
+    5. NO LOSSY COMPRESSION - Perfect file integrity
+       Uses lossless codecs, bit-perfect recovery
+    
+    6. STREAMING MODE - Handle 1GB+ files
+       Chunked processing without memory issues
+    
+    7. USER-AUTHENTICATED - Track & audit
+       Know who created/extracted each file
+
+
+---
+
+## TARGET USERS
+
+    🏢 Enterprises       - Secure sensitive file transfer
+    🔬 Researchers       - Watermarking, data protection
+    👤 Privacy Activists - Covert communication
+    💼 Professionals     - Confidential document sharing
+    📚 Academics         - Steganography research
+    🎨 Content Creators  - Digital watermarking
+
+
+---
+
+## DESIGN REQUIREMENTS
+
+### COLOR SCHEME
+    Primary:   #667eea (purple-blue)
+    Secondary: #764ba2 (dark purple)
+    Accent:    #27ae60 (green, for success)
+    Danger:    #e74c3c (red, for errors)
+    Text:      #333333 (dark gray)
+    Background: #f5f5f5 (light gray)
+
+### FONTS
+    Headers:   Segoe UI, Tahoma, sans-serif
+    Body:      -apple-system, BlinkMacSystemFont, sans-serif
+    Monospace: 'Courier New', monospace (for keys)
+
+### RESPONSIVE
+    Mobile:    320px - 768px
+    Tablet:    768px - 1024px
+    Desktop:   1024px+
+
+### ANIMATIONS
+    Smooth transitions (300ms)
+    Progress bars with percentage
+    Toast notifications for feedback
+    Modal dialogs for confirmations
+    Loading skeletons during operations
+
+
+---
+
+## FUNCTIONALITY CHECKLIST
+
+### AUTHENTICATION
+    ☐ Signup form with validation
+    ☐ Login form with remember-me option
+    ☐ Password reset via email
+    ☐ JWT token management
+    ☐ Session timeout handling
+    ☐ Logout confirmation
+
+### FILE OPERATIONS
+    ☐ Drag-and-drop upload
+    ☐ File type validation
+    ☐ File size limits based on concept
+    ☐ Upload progress indicator
+    ☐ Cancel upload option
+    ☐ Retry failed uploads
+
+### ENCRYPTION
+    ☐ RSA-only option
+    ☐ Password-only option
+    ☐ Hybrid option (default)
+    ☐ Password strength indicator
+    ☐ Show/hide password toggle
+    ☐ Password confirmation
+
+### SHARING
+    ☐ Multi-user selection
+    ☐ Search users by name/email
+    ☐ Selected recipients list
+    ☐ Add/remove recipients
+    ☐ Public link generation (optional)
+    ☐ Share via email integration (optional)
+
+### EXTRACTION
+    ☐ Upload stego file
+    ☐ Password input
+    ☐ Extract progress tracking
+    ☐ File integrity check
+    ☐ Download extracted file
+    ☐ Copy to clipboard (for messages)
+
+### KEY MANAGEMENT
+    ☐ View public key
+    ☐ Download public key
+    ☐ Decrypt private key (with password)
+    ☐ View key metadata (date, size, fingerprint)
+    ☐ Regenerate keys option
+    ☐ Import keys (optional)
+
+### DASHBOARD
+    ☐ Recent operations list
+    ☐ Use statistics (files hidden/extracted)
+    ☐ Notification center
+    ☐ Settings panel
+    ☐ Help/documentation
+    ☐ Account management
+
+
+---
+
+## PERFORMANCE TARGETS
+
+    Page Load:         < 3 seconds
+    Hide Operation:    30-45 seconds (1GB video)
+    Extract Operation: 20-30 seconds (1GB video)
+    API Response:      < 500ms average
+    Upload Speed:      Limited by network only
+    Download Speed:    Limited by network only
+    GPU Utilization:   30-50% (RTX 2060)
+    Memory Usage:      < 2GB during operations
+
+
+---
+
+## TAGLINE & MESSAGING
+
+Main Tagline:
+    "Hide in Plain Sight: Military-grade encryption meets steganography.
+     Share anything, anywhere, securely."
+
+Feature Taglines:
+    "Nine ways to hide. Infinite ways to secure."
+    "1GB in 45 seconds. Security you can trust."
+    "Your files. Your encryption. Your control."
+    "Steganography meets modern security."
+
+
+---
+
+## DEPLOYMENT
+
+### BACKEND
+    Framework:  FastAPI (Python 3.10)
+    Database:   SQLite (stego_system.db)
+    Queue:      Redis RQ (optional)
+    Workers:    Uvicorn
+    
+### FRONTEND
+    Framework:  HTML5 + CSS3 + JavaScript
+    Alternative: React/Vue.js for advanced features
+    
+### HOSTING
+    Platform:   Render (current)
+    Storage:    Local /static/outputs/
+    
+### API ENDPOINTS
+    POST   /api/signin
+    POST   /api/signup
+    POST   /api/hide-file
+    POST   /api/extract-file
+    POST   /api/hide-message
+    POST   /api/extract-message
+    GET    /api/download/{filename}
+    GET    /api/keys/public
+    POST   /api/keys/private
+    GET    /api/users
+    GET    /api/activity-log
+
+
+---
+
+## SUCCESS METRICS
+
+    1. Users can hide files in < 2 minutes
+    2. File extraction works 100% of the time
+    3. Multi-recipient extraction works correctly
+    4. 4-6x performance improvement visible
+    5. GPU acceleration reduces video time by 9-12x
+    6. Users understand all 9 concepts
+    7. No data loss during operations
+    8. Smooth UX with no confusing errors
+
+
+---
+
+## NEXT STEPS
+
+    1. Frontend mockups (Figma)
+    2. User testing on concept selector
+    3. Performance benchmarking
+    4. Security audit
+    5. Load testing
+    6. Mobile optimization
+    7. Accessibility review (WCAG)
+    8. Documentation & tutorials
+    9. Beta launch
+    10. Gather feedback → Iterate
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Created: March 15, 2026
+Project: Steganography System with 9 Cross-Media Concepts
+Status: Ready for Development
+
+═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: sentinelx-steganography
+    runtime: python
+    region: oregon
+    plan: free
+    rootDir: mobile_app/Tools_Backend/SteganoGraphy
+    buildCommand: pip install -r requirements-render.txt
+    startCommand: gunicorn -w 2 -k uvicorn.workers.UvicornWorker app:app --bind 0.0.0.0:$PORT --timeout 120
+    envVars:
+      - key: RENDER_DEPLOY
+        value: "true"
+    autoDeploy: true
