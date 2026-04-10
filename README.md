@@ -364,6 +364,36 @@ Deployment configuration for Render.com platform
 
 ---
 
+## Deployment
+
+> **Ready to deploy?** Check these guides:
+> 
+> - 📘 **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete deployment guide (Render, Railway, Fly.io, VPS, Vercel)
+> - ⚡ **[VERCEL_SETUP.md](VERCEL_SETUP.md)** - Vercel-specific workaround (not recommended)
+> - 🔧 **[.env.example](.env.example)** - Configuration template
+> - ✅ **Quick Validator**: `python prepare_deployment.py`
+
+### Quick Deployment (Render)
+
+```bash
+# 1. Prepare code
+git add .
+git commit -m "Ready for Render deployment"
+git push origin main
+
+# 2. Create account at https://dashboard.render.com/
+
+# 3. Connect repository and fill in:
+#    Build: pip install -r backend/config/requirements.txt
+#    Start: cd backend && gunicorn -w 2 -k uvicorn.workers.UvicornWorker api.app:app --bind 0.0.0.0:$PORT
+
+# 4. Deploy!
+```
+
+See **[DEPLOYMENT.md](DEPLOYMENT.md)** for detailed instructions on all platforms.
+
+---
+
 ## Running the Application
 
 ### Development Mode
@@ -429,13 +459,43 @@ docker build -t stego-system .
 docker run -p 5001:5001 stego-system
 ```
 
-#### Render.com Deployment
+#### Render.com Deployment (Recommended)
+
+Render.com is **recommended** for this project (configured in `backend/config/render.yaml`):
 
 ```bash
-# Push to repository and configure in Render dashboard
-# Uses render.yaml for configuration
+# Step 1: Push code to GitHub
+git add .
+git commit -m "Ready for Render deployment"
 git push origin main
+
+# Step 2: Connect to Render.com
+# 1. Go to https://dashboard.render.com/
+# 2. Click "New +" → "Web Service"
+# 3. Connect your GitHub repository
+# 4. Fill in details:
+#    - Name: sentinelx-steganography
+#    - Environment: Python 3
+#    - Root Directory: . (or path to backend if subdirectory)
+#    - Build Command: pip install -r backend/config/requirements.txt
+#    - Start Command: gunicorn -w 2 -k uvicorn.workers.UvicornWorker backend.api.app:app --bind 0.0.0.0:$PORT
+# 5. Add environment variables:
+#    - Use free tier for testing or paid for production
+
+# Step 3: Deploy
+# Render auto-deploys on each push to main
 ```
+
+**Render Advantages:**
+- ✅ Long-running processes supported
+- ✅ Persistent storage option
+- ✅ Better for heavy computation
+- ✅ Free tier available for testing
+- ✅ Native Python support
+
+#### Vercel Deployment (Not Recommended - See Below)
+
+Vercel is **NOT ideal** for FastAPI applications. See [Why Not Vercel?](#why-vercel-is-not-ideal) section for details.
 
 ---
 
@@ -975,6 +1035,301 @@ This project is licensed under the **MIT License** - see LICENSE file for detail
 - ✅ Private use
 - ❌ Liability
 - ❌ Warranty
+
+---
+
+## Deployment Guide
+
+### Comparison of Deployment Platforms
+
+| Platform | Type | Best For | Limitations |
+|----------|------|----------|-------------|
+| **Render** | Long-running | FastAPI/Docker | Free tier limited RAM |
+| **Railway** | Long-running | Full-stack apps | Paid only |
+| **Fly.io** | Long-running | Docker apps | Region selection |
+| **Vercel** | Serverless | Next.js/Frontend | ❌ NOT for FastAPI |
+| **Heroku** | Long-running | Full-stack apps | Paid (pricing increased) |
+| **AWS** | Cloud | Enterprise | Complex setup |
+
+### Why Vercel is NOT Ideal
+
+**❌ Vercel Limitations for This Project:**
+
+1. **Execution Timeout**
+   - Vercel serverless: Max 60 seconds (free) or 900 seconds (pro)
+   - Your steganography operations often exceed this
+   - Video processing: 5+ minutes
+
+2. **No Persistent Storage**
+   - Vercel's `/tmp` is ephemeral
+   - Files deleted after function execution
+   - Can't store user keys or uploads
+
+3. **Memory Constraints**
+   - Vercel serverless: 512MB-3GB
+   - Large media files consume significant memory
+   - Video+GPU processing memory needs exceed limits
+
+4. **Cold Start Issues**
+   - Initial requests slow (Python runtime cold start)
+   - Steganography processing already slow
+   - Combined = poor user experience
+
+5. **No Background Jobs**
+   - Vercel doesn't support Redis/RQ workers
+   - Long processes must complete in one request
+
+### ✅ Recommended Deployment: Render.com
+
+Your project is already configured for Render! Here's the complete setup:
+
+#### Step-by-Step Render Deployment
+
+##### Prerequisites
+- GitHub account with your code pushed
+- Render.com account (free tier available)
+
+##### Deployment Steps
+
+**1. Prepare Your Repository**
+
+```bash
+# Ensure render.yaml is in backend/config/
+# Check that all dependencies are in requirements.txt
+# Commit everything
+git add .
+git commit -m "Prepare for Render deployment"
+git push origin main
+```
+
+**2. Create Render Account**
+
+Visit https://dashboard.render.com/ and sign up with GitHub
+
+**3. Connect Repository**
+
+```
+Dashboard → New + → Web Service → Connect Repository
+```
+
+**4. Configure Service**
+
+Fill in the following details:
+
+| Field | Value |
+|-------|-------|
+| **Name** | `steganography-api` |
+| **Environment** | `Python 3` |
+| **Region** | `Oregon` (recommended for US) |
+| **Branch** | `main` |
+| **Root Directory** | `.` or leave empty |
+| **Build Command** | `pip install -r backend/config/requirements.txt` |
+| **Start Command** | `cd backend && gunicorn -w 2 -k uvicorn.workers.UvicornWorker api.app:app --bind 0.0.0.0:$PORT --timeout 120` |
+| **Plan** | `Free` (for testing) or `Starter` ($7/month) |
+
+**5. Add Environment Variables**
+
+Click "Add Environment Variable":
+
+```env
+PYTHON_VERSION=3.11
+PYTHONUNBUFFERED=1
+RENDER=true
+SECRET_KEY=your-secret-key-here-change-this
+```
+
+**6. Deploy**
+
+Click "Create Web Service" - Render will:
+- Clone your repository
+- Install dependencies
+- Build and deploy
+- Start the server
+
+**7. Access Your API**
+
+After deployment:
+- API: `https://your-service-name.onrender.com`
+- Docs: `https://your-service-name.onrender.com/docs`
+- ReDoc: `https://your-service-name.onrender.com/redoc`
+
+#### Render Production Configuration
+
+For production, upgrade to paid tier and add:
+
+```yaml
+# backend/config/render.yaml
+services:
+  - type: web
+    name: steganography-api
+    runtime: python
+    region: oregon
+    plan: starter  # or higher
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -w 4 -k uvicorn.workers.UvicornWorker api.app:app --bind 0.0.0.0:$PORT --timeout 300
+    envVars:
+      - key: RENDER
+        value: "true"
+      - key: DATABASE_URL
+        value: "sqlite:////var/data/stego_system.db"
+    disk:
+      name: stego-data
+      mountPath: /var/data
+      sizeGB: 10
+```
+
+#### Scaling on Render
+
+- **Free Tier**: 0.5 CPU, 512MB RAM, auto-sleeps after 15 mins
+- **Starter**: 0.5 CPU, 512MB RAM, $7/month
+- **Standard**: 1 CPU, 2GB RAM, $12/month
+- **Pro**: 2 CPU, 4GB RAM, $29/month
+
+For heavy video processing, recommend **Standard** or **Pro**.
+
+### Alternative: Railway.sh
+
+If you prefer Railway (similar to Render):
+
+```bash
+# 1. Install Railway CLI
+npm install -g @railway/cli
+
+# 2. Create railway account
+railway login
+
+# 3. Create new project
+railway init
+
+# 4. Add environment variables
+railway variables set SECRET_KEY=your-secret
+railway variables set PYTHONUNBUFFERED=1
+
+# 5. Deploy
+railway up
+```
+
+**railway.toml** configuration:
+
+```toml
+[build]
+builder = "dockerfile"
+
+[start]
+cmd = "cd backend && gunicorn -w 4 -k uvicorn.workers.UvicornWorker api.app:app --bind 0.0.0.0:$PORT"
+
+[env]
+PORT = "8000"
+PYTHONUNBUFFERED = "1"
+```
+
+### Alternative: Fly.io (Docker-Based)
+
+For Docker deployment (more complex but more control):
+
+```bash
+# 1. Install Fly CLI
+curl -L https://fly.io/install.sh | sh
+
+# 2. Create app
+fly launch
+
+# 3. Deploy
+fly deploy
+```
+
+**Dockerfile** for your project:
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY backend/config/requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application
+COPY . .
+
+# Expose port
+EXPOSE 8000
+
+# Run server
+CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", \
+     "backend.api.app:app", "--bind", "0.0.0.0:8000", "--timeout", "120"]
+```
+
+### If You Really Want Vercel (Workarounds)
+
+**⚠️ WARNING: Not Recommended - Only for Simple Operations**
+
+If you insist on Vercel, you can deploy only the frontend and use a separate API endpoint:
+
+**1. Split Frontend/Backend**
+
+```
+Create separate repository:
+frontend/
+├── public/
+├── pages/
+├── api/
+│   └── proxy.js (calls external API)
+└── vercel.json
+```
+
+**2. Vercel API Routes (Proxy)**
+
+```javascript
+// pages/api/stego/hide.js
+export default async (req, res) => {
+  if (req.method === 'POST') {
+    // Forward to external API (deployed on Render/Railway)
+    const response = await fetch(
+      `https://your-api.onrender.com/api/operations/hide/image`,
+      {
+        method: 'POST',
+        body: req.body,
+        headers: req.headers
+      }
+    );
+    const data = await response.json();
+    res.status(response.status).json(data);
+  }
+};
+```
+
+**3. vercel.json**
+
+```json
+{
+  "buildCommand": "npm run build",
+  "serverlessFunctionRegion": "sjc1",
+  "functions": {
+    "api/**": {
+      "memory": 3008,
+      "maxDuration": 60
+    }
+  },
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@api_url"
+  }
+}
+```
+
+**Result**: Frontend on Vercel, API on Render
+- ✅ Fast frontend hosting
+- ✅ Independent API scaling
+- ✅ Works around Vercel limitations
 
 ---
 
